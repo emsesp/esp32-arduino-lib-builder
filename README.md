@@ -1,6 +1,11 @@
-# Tasmota Arduino PlatformIO framework builder [![ESP32 builder](https://github.com/Jason2866/esp32-arduino-lib-builder/actions/workflows/parallel_build.yaml/badge.svg)](https://github.com/Jason2866/esp32-arduino-lib-builder/actions/workflows/parallel_build.yaml)[![GitHub Releases](https://img.shields.io/github/downloads/Jason2866/esp32-arduino-lib-builder/total?label=downloads)](https://github.com/Jason2866/esp32-arduino-lib-builder/releases/latest)
+# EMS-ESP Arduino PlatformIO framework builder [![ESP32 builder](https://github.com/Jason2866/esp32-arduino-lib-builder/actions/workflows/parallel_build.yaml/badge.svg)](https://github.com/Jason2866/esp32-arduino-lib-builder/actions/workflows/parallel_build.yaml)[![GitHub Releases](https://img.shields.io/github/downloads/Jason2866/esp32-arduino-lib-builder/total?label=downloads)](https://github.com/Jason2866/esp32-arduino-lib-builder/releases/latest)
 
-This repository contains the scripts that produce the libraries included with Tasmota esp32-arduino.
+This repository contains the scripts that produce the libraries included with EMS-ESP esp32-arduino.
+
+It is a fork of Tasmota Arduino PlatformIO framework builder.
+https://github.com/Jason2866/esp32-arduino-lib-builder
+
+The main difference is that it builds the libraries for EMS-ESP instead of Tasmota.
 
 Tested on Ubuntu and MacOS.
 

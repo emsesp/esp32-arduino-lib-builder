@@ -71,7 +71,7 @@ fi
 if [ $? -ne 0 ]; then exit 1; fi
 
 #
-# remove code and libraries not needed/wanted for Tasmota framework
+# remove code and libraries not needed/wanted for EMS-ESP framework
 #
 rm -rf "$AR_COMPS/arduino/docs"
 rm -rf "$AR_COMPS/arduino/idf_component_examples"
