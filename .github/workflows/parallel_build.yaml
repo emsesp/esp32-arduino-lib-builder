@@ -32,28 +32,9 @@ jobs:
         name: artifacts-${{ matrix.target }}
         path: out/framework-arduinoespressif32
 
-  build-slave_firmware:
-    name: Build Slave Firmware
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-    - name: Install dependencies
-      run: bash ./tools/prepare-ci.sh
-    - name: Build slave firmware
-      run: bash ./tools/compile_slave.sh
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: slave_firmware
-        path: ./esp-hosted-mcu/slave/wifi_copro_fw
-
   combine-artifacts:
     name: Combine artifacts and create framework
-    needs: [build-libs, build-slave_firmware]
+    needs: [build-libs]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -67,15 +48,8 @@ jobs:
         path: framework-arduinoespressif32
         pattern: artifacts-*
         merge-multiple: true
-    - name: Download slave firmware
-      uses: actions/download-artifact@v4
-      with:
-        name: slave_firmware
-        path: slave_firmware
     - name: Create complete framework
       run: |
-        mkdir -p framework-arduinoespressif32/tools/slave_firmware
-        mv slave_firmware/* framework-arduinoespressif32/tools/slave_firmware/
         mv framework-arduinoespressif32/release-info.txt .
         IDF_BRANCH=$(grep 'esp-idf branch' release-info.txt | sed -E 's/.*branch \[([^]]+)\].*/\1/')
         IDF_COMMIT=$(grep 'esp-idf branch' release-info.txt | sed -E 's/.*commit \[([^]]+)\].*/\1/')
