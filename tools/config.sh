@@ -31,7 +31,8 @@ if [ -z "$CHIP_VARIANT" ]; then
 fi
 
 # Owner of the target ESP32 Arduino repository
-AR_USER="ems-esp"
+# TODO: should be changed to emsesp??
+AR_USER="tasmota"
 
 # IDF commit to use
 #IDF_COMMIT=""
