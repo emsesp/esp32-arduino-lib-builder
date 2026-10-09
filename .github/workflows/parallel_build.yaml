@@ -1,7 +1,7 @@
 name: EMS-ESP IDF v5.5 gcc 15.2 picolib
 
 on:
-  workflow_dispatch:  # Manually start a workflow
+  workflow_dispatch:
 
 jobs:
   build-libs:
@@ -13,18 +13,11 @@ jobs:
       fail-fast: true
     steps:
     - uses: actions/checkout@v7
-    - name: Set up Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: '3.13'
     - name: Install dependencies
       run: bash ./tools/prepare-ci.sh
-    - name: Get current branch
-      run: |
-        echo "GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
     - name: Build Libs for ${{ matrix.target }}
       run: |
-        bash ./build.sh -e -t ${{ matrix.target }}
+        bash ./build.sh -t ${{ matrix.target }}
         mv release-info.txt out/framework-arduinoespressif32
     - name: Upload artifacts for ${{ matrix.target }}
       uses: actions/upload-artifact@v7
@@ -37,79 +30,40 @@ jobs:
     needs: [build-libs]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v7
-    - name: Set up Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: '3.13'
     - name: Download build artifacts
       uses: actions/download-artifact@v8
       with:
         path: framework-arduinoespressif32
         pattern: artifacts-*
         merge-multiple: true
-    - name: Create complete framework
+    - name: Package framework
+      id: package
       run: |
         mv framework-arduinoespressif32/release-info.txt .
         IDF_BRANCH=$(grep 'esp-idf branch' release-info.txt | sed -E 's/.*branch \[([^]]+)\].*/\1/')
         IDF_COMMIT=$(grep 'esp-idf branch' release-info.txt | sed -E 's/.*commit \[([^]]+)\].*/\1/')
-        echo "IDF_BRANCH=$IDF_BRANCH"
-        echo "IDF_COMMIT=$IDF_COMMIT"
         idf_version_string="${IDF_BRANCH//\//_}-$IDF_COMMIT"
         tar --exclude=.* -Jcf framework-arduinoespressif32-${idf_version_string}.tar.xz framework-arduinoespressif32/
 
-    - name: Set tag name
-      id: set_tag_name
-      run: |
-        # Debug: Zeige den Inhalt von release-info.txt
-        echo "=== Content of release-info.txt ==="
-        cat release-info.txt
-        echo "================================="
-        
-        # Extract the version from either release/vX.Y[.Z] or vX.Y[.Z] branches.
         IDF_VERSION=$(grep 'esp-idf branch' release-info.txt | sed -nE 's/.*branch \[((release\/)?v[0-9]+\.[0-9]+(\.[0-9]+)?([_.-]?[a-zA-Z0-9]+)*)\].*/\1/p' | head -1)
         IDF_VERSION="${IDF_VERSION#release/}"
         IDF_VERSION="${IDF_VERSION#v}"
-        
-        # Default falls nichts gefunden wird
         if [ -z "$IDF_VERSION" ]; then
           IDF_VERSION="unknown"
         fi
-        
-        # Datum im europäischen Format (Tag/Monat-Stunde-Minute)
-        DATE=$(date +"%d%m-%H%M")
-        
-        # Tag name ohne "v" Präfix
-        TAG_NAME="${DATE}-${IDF_VERSION}"
-        
-        echo "IDF_VERSION: $IDF_VERSION"
-        echo "DATE: $DATE" 
-        echo "TAG_NAME: $TAG_NAME"
-        
-        # Validiere Tag-Name Format (erlaubt Punkte, Unterstriche, Bindestriche)
-        if [[ "$TAG_NAME" =~ ^[a-zA-Z0-9._-]+$ ]]; then
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-        else
+
+        TAG_NAME="$(date +"%d%m-%H%M")-${IDF_VERSION}"
+        if [[ ! "$TAG_NAME" =~ ^[a-zA-Z0-9._-]+$ ]]; then
           echo "ERROR: Invalid tag name format: $TAG_NAME"
           exit 1
         fi
-
-    - name: Debug tag name
-      run: |
-        echo "Generated tag name: ${{ steps.set_tag_name.outputs.tag_name }}"
-        if [ -z "${{ steps.set_tag_name.outputs.tag_name }}" ]; then
-          echo "ERROR: tag_name is empty!"
-          exit 1
-        fi
-
+        echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
     - name: Release framework-arduinoespressif32
       uses: softprops/action-gh-release@v3
       with:
-        tag_name: ${{ steps.set_tag_name.outputs.tag_name }}
+        tag_name: ${{ steps.package.outputs.tag_name }}
         body_path: release-info.txt
         prerelease: true
-        files: |
-          framework-arduinoespressif32-*.tar.xz
-          release-info.txt
+        files: framework-arduinoespressif32-*.tar.xz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
