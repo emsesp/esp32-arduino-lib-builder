@@ -1,26 +1,32 @@
-# EMS-ESP Arduino PlatformIO framework builder [![ESP32 builder](https://github.com/Jason2866/esp32-arduino-lib-builder/actions/workflows/parallel_build.yaml/badge.svg)](https://github.com/Jason2866/esp32-arduino-lib-builder/actions/workflows/parallel_build.yaml)[![GitHub Releases](https://img.shields.io/github/downloads/Jason2866/esp32-arduino-lib-builder/total?label=downloads)](https://github.com/Jason2866/esp32-arduino-lib-builder/releases/latest)
+# EMS-ESP Arduino PlatformIO framework builder [![ESP32 builder](https://github.com/emsesp/esp32-arduino-lib-builder/actions/workflows/parallel_build.yaml/badge.svg)](https://github.com/emsesp/esp32-arduino-lib-builder/actions/workflows/parallel_build.yaml)[![GitHub Releases](https://img.shields.io/github/downloads/emsesp/esp32-arduino-lib-builder/total?label=downloads)](https://github.com/emsesp/esp32-arduino-lib-builder/releases/latest)
 
-This repository contains the scripts that produce the libraries included with EMS-ESP esp32-arduino.
-
-It is a fork of Tasmota Arduino PlatformIO framework builder.
+This is a fork of Tasmota Arduino PlatformIO framework builder that builds the libraries for EMS-ESP instead of Tasmota.
 https://github.com/Jason2866/esp32-arduino-lib-builder
 
-The main difference is that it builds the libraries for EMS-ESP instead of Tasmota.
+The main difference is that it builds the libraries for EMS-ESP instead of Tasmota. The changea are int he file `configs/defconfig.ems-esp`
 
-Tested on Ubuntu and MacOS.
-
-### Build on Ubuntu
+### Setup on Ubuntu
 ```bash
-sudo apt update
-sudo apt install -y git wget curl libssl-dev libncurses-dev flex bison gperf python-setuptools gperf cmake ninja-build ccache jq xz-utils
+sudo apt install -y git wget curl libssl-dev libncurses-dev flex bison gperf python3-setuptools cmake ninja-build ccache jq xz-utils
 curl -LsSf https://astral.sh/uv/install.sh | sh
 uv venv
 uv pip install future pyelftools
-git clone https://github.com/espressif/esp32-arduino-lib-builder
-cd esp32-arduino-lib-builder
-./build.sh
 ```
 
+### Testing
+```bash
+./build.sh -t esp32 -b idf-libs ems-esp
+```
+
+### Quick re-testing (-s skips reinstalling ESP-IDF and components)
+```bash
+./build.sh -s -t esp32
+```
+
+### Build on Ubuntu
+```bash
+./build.sh
+```
 ### Using the User Interface
 
 You can more easily build the libraries using the user interface found in the `tools/config_editor/` folder.
@@ -36,7 +42,7 @@ To use it, follow these steps:
 
 2. Install the required UI packages using `uv pip install -r tools/config_editor/requirements.txt`.
 
-3. Execute the script `tools/config_editor/app.py` from any folder. It will automatically detect the path to the root of the repository.
+3. Run `python3 tools/config_editor/app.py` from the repo root. It will automatically detect the path to the root of the repository. If you installed UI packages with `uv`, use `uv run python tools/config_editor/app.py` so the venv is used.
 
 4. Configure the compilation and ESP-IDF options as desired.
 

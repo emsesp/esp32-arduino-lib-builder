@@ -1,0 +1,23 @@
+# EMS-ESP overrides. Applied after defconfig.common and defconfig.<chip>.
+
+# CONFIG_BT_ENABLED is not set
+# CONFIG_LWIP_PPP_SUPPORT is not set
+# CONFIG_LWIP_IP_FORWARD is not set
+# CONFIG_LWIP_IPV4_NAPT is not set
+# CONFIG_LWIP_IPV4_NAPT_PORTMAP is not set
+# CONFIG_ULP_COPROC_ENABLED is not set
+# Arduino ETH.cpp uses spi_host_device_t unconditionally; disabling SPI
+# Ethernet here fails the lib build. Unused W5500/DM9051 objects are GC'd.
+# CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS is not set
+# CONFIG_FREERTOS_USE_TRACE_FACILITY is not set
+# CONFIG_FREERTOS_ENABLE_TASK_SNAPSHOT is not set
+# CONFIG_ESP_MODEM_USE_PPP_MODE is not set
+# CONFIG_ESP_GDBSTUB_ENABLED is not set
+# CONFIG_MDNS_ENABLE_CONSOLE_CLI is not set
+# CONFIG_MDNS_ENABLE_BROWSE is not set
+# CONFIG_I2S_ISR_IRAM_SAFE is not set
+# UART ISR must live in IRAM. Tasmota puts ringbuf ISRs in flash, which
+# forces CONFIG_UART_ISR_IN_IRAM=n and panics (Cache error) when the EMS
+# or console UART fires during a flash read (WiFi stop / mDNS / NVS).
+# CONFIG_RINGBUF_PLACE_ISR_FUNCTIONS_INTO_FLASH is not set
+CONFIG_UART_ISR_IN_IRAM=y

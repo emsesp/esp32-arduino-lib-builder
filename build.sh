@@ -111,9 +111,12 @@ if [ $SKIP_ENV -eq 0 ]; then
     source ./tools/install-esp-idf.sh
     if [ $? -ne 0 ]; then exit 1; fi
 else
-    # $IDF_PATH/install.sh
-    # source $IDF_PATH/export.sh
     source ./tools/config.sh
+    if [ ! -f "$IDF_PATH/export.sh" ]; then
+        echo "ERROR: ESP-IDF not found at $IDF_PATH. Run ./build.sh once without -s."
+        exit 1
+    fi
+    source "$IDF_PATH/export.sh"
 fi
 
 if [ "$BUILD_TYPE" != "all" ]; then
@@ -264,25 +267,25 @@ done
 #
 rm -rf "$AR_TOOLS/esp32-arduino-libs/versions.txt"
 # The lib-builder version
-component_version="lib-builder: "$(git -C "$AR_ROOT" symbolic-ref --short HEAD || git -C "$AR_ROOT" tag --points-at HEAD)" "$(git -C "$AR_ROOT" rev-parse --short HEAD)
+component_version="lib-builder: "$(git -C "$AR_ROOT" symbolic-ref --short HEAD 2>/dev/null || git -C "$AR_ROOT" tag --points-at HEAD)" "$(git -C "$AR_ROOT" rev-parse --short HEAD)
 echo $component_version >> "$AR_TOOLS/esp32-arduino-libs/versions.txt"
 # ESP-IDF version
-component_version="esp-idf: "$(git -C "$IDF_PATH" symbolic-ref --short HEAD || git -C "$IDF_PATH" tag --points-at HEAD)" "$(git -C "$IDF_PATH" rev-parse --short HEAD)
+component_version="esp-idf: "$(git -C "$IDF_PATH" symbolic-ref --short HEAD 2>/dev/null || git -C "$IDF_PATH" tag --points-at HEAD)" "$(git -C "$IDF_PATH" rev-parse --short HEAD)
 echo $component_version >> "$AR_TOOLS/esp32-arduino-libs/versions.txt"
 # components version
 for component in `ls "$AR_COMPS"`; do
     if [ -d "$AR_COMPS/$component/.git" ]; then
-        component_version="$component: "$(git -C "$AR_COMPS/$component" symbolic-ref --short HEAD || git -C "$AR_COMPS/$component" tag --points-at HEAD)" "$(git -C "$AR_COMPS/$component" rev-parse --short HEAD)
+        component_version="$component: "$(git -C "$AR_COMPS/$component" symbolic-ref --short HEAD 2>/dev/null || git -C "$AR_COMPS/$component" tag --points-at HEAD)" "$(git -C "$AR_COMPS/$component" rev-parse --short HEAD)
         echo $component_version >> "$AR_TOOLS/esp32-arduino-libs/versions.txt"
     fi
 done
 # TinyUSB version
-component_version="tinyusb: "$(git -C "$AR_COMPS/arduino_tinyusb/tinyusb" symbolic-ref --short HEAD || git -C "$AR_COMPS/arduino_tinyusb/tinyusb" tag --points-at HEAD)" "$(git -C "$AR_COMPS/arduino_tinyusb/tinyusb" rev-parse --short HEAD)
+component_version="tinyusb: "$(git -C "$AR_COMPS/arduino_tinyusb/tinyusb" symbolic-ref --short HEAD 2>/dev/null || git -C "$AR_COMPS/arduino_tinyusb/tinyusb" tag --points-at HEAD)" "$(git -C "$AR_COMPS/arduino_tinyusb/tinyusb" rev-parse --short HEAD)
 echo $component_version >> "$AR_TOOLS/esp32-arduino-libs/versions.txt"
 # managed components version
 for component in `ls "$AR_MANAGED_COMPS"`; do
     if [ -d "$AR_MANAGED_COMPS/$component/.git" ]; then
-        component_version="$component: "$(git -C "$AR_MANAGED_COMPS/$component" symbolic-ref --short HEAD || git -C "$AR_MANAGED_COMPS/$component" tag --points-at HEAD)" "$(git -C "$AR_MANAGED_COMPS/$component" rev-parse --short HEAD)
+        component_version="$component: "$(git -C "$AR_MANAGED_COMPS/$component" symbolic-ref --short HEAD 2>/dev/null || git -C "$AR_MANAGED_COMPS/$component" tag --points-at HEAD)" "$(git -C "$AR_MANAGED_COMPS/$component" rev-parse --short HEAD)
         echo $component_version >> "$AR_TOOLS/esp32-arduino-libs/versions.txt"
     elif [ -f "$AR_MANAGED_COMPS/$component/idf_component.yml" ]; then
         component_version="$component: "$(cat "$AR_MANAGED_COMPS/$component/idf_component.yml" | grep "^version: " | cut -d ' ' -f 2)

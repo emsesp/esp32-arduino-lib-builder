@@ -74,6 +74,12 @@ if [ -d "$IDF_PATH" ]; then
     export IDF_COMMIT=$(git -C "$IDF_PATH" rev-parse --short HEAD)
 fi
 
+if [ -z "$IDF_VERSION" ] && [ -f "$IDF_PATH/version.txt" ]; then
+    export IDF_VERSION=$(tr -d '[:space:]' < "$IDF_PATH/version.txt")
+elif [ -z "$IDF_VERSION" ]; then
+    export IDF_VERSION="${IDF_BRANCH#v}"
+fi
+
 echo "Using IDF branch $IDF_BRANCH"
 echo "Using IDF commit $IDF_COMMIT"
 

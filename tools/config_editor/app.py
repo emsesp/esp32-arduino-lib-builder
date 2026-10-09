@@ -184,7 +184,6 @@ def main() -> None:
                              + ". Default: All except " + ", ".join([x[0] for x in target_choices if not x[1]]))
 
     parser.add_argument("--copy",
-                        type=bool,
                         action=argparse.BooleanOptionalAction,
                         default=False,
                         required=False,
