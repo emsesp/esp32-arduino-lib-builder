@@ -13,9 +13,17 @@ jobs:
       fail-fast: true
     steps:
     - uses: actions/checkout@v7
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2.24
+      with:
+        key: ${{ matrix.target }}
+        max-size: 2G
     - name: Install dependencies
       run: bash ./tools/prepare-ci.sh
     - name: Build Libs for ${{ matrix.target }}
+      env:
+        # the toolchain is installed fresh on every run, so its file times change; compare content instead
+        CCACHE_COMPILERCHECK: content
       run: |
         bash ./build.sh -t ${{ matrix.target }}
         mv release-info.txt out/framework-arduinoespressif32
