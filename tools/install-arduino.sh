@@ -97,3 +97,13 @@ rm -rf "$AR_COMPS/arduino/libraries/ESP_NOW"
 rm -rf "$AR_COMPS/arduino/libraries/TFLiteMicro"
 rm -rf "$AR_COMPS/arduino/libraries/OpenThread"
 rm -rf "$AR_COMPS/arduino/libraries/Zigbee"
+rm -rf "$AR_COMPS/arduino/libraries/ESP_Video"
+rm -rf "$AR_COMPS/arduino/libraries/FFat"
+rm -rf "$AR_COMPS/arduino/libraries/PPP"
+rm -rf "$AR_COMPS/arduino/libraries/SD"
+rm -rf "$AR_COMPS/arduino/libraries/SD_MMC"
+
+# the removed libraries above that are still listed in ARDUINO_ALL_LIBRARIES in the
+# arduino component's CMakeLists.txt must be dropped from that list too, otherwise
+# CMake fails on the missing source files
+$SED -i -E '/^[[:space:]]+(FFat|PPP|SD|SD_MMC)[[:space:]]*$/d' "$AR_COMPS/arduino/CMakeLists.txt"

@@ -9,18 +9,18 @@ echo "Updating TinyUSB..."
 TINYUSB_REPO_URL="https://github.com/hathach/tinyusb.git"
 TINYUSB_REPO_DIR="$AR_COMPS/arduino_tinyusb/tinyusb"
 TINYUSB_PATCH_DIR="$AR_PATCHES/tinyusb"
+# TinyUSB is pinned to a commit, so the clone lives on a detached HEAD (no pull possible)
+TINYUSB_COMMIT="99c53f32c20654348cfd0cd7fc87d94543674c81"
 if [ ! -d "$TINYUSB_REPO_DIR" ]; then
-       git clone -b master "$TINYUSB_REPO_URL" "$TINYUSB_REPO_DIR"
-       cd "$TINYUSB_REPO_DIR"
-       git checkout 99c53f32c20654348cfd0cd7fc87d94543674c81
-       cd -
+       git clone -b master "$TINYUSB_REPO_URL" "$TINYUSB_REPO_DIR" && \
+       git -C "$TINYUSB_REPO_DIR" checkout "$TINYUSB_COMMIT"
 else
        # The clone is build output, not a workspace: drop the patches of the previous run,
-       # and anything they left behind, so pull --ff-only does not trip over them.
+       # and anything they left behind, so the checkout of the pinned commit is clean.
        git -C "$TINYUSB_REPO_DIR" reset --hard && \
        git -C "$TINYUSB_REPO_DIR" clean -fd && \
        git -C "$TINYUSB_REPO_DIR" fetch && \
-       git -C "$TINYUSB_REPO_DIR" pull --ff-only
+       git -C "$TINYUSB_REPO_DIR" checkout "$TINYUSB_COMMIT"
 fi
 if [ $? -ne 0 ]; then exit 1; fi
 
