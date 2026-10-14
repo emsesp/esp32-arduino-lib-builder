@@ -105,6 +105,7 @@ If EMS-ESP needs one of these libraries again, delete its `rm -rf` line in `tool
 | `CONFIG_FREERTOS_ENABLE_TASK_SNAPSHOT` | off | Task snapshot for core dumps / GDB | Already off in common; forced off so a later file cannot re-enable it. |
 | `CONFIG_ESP_MODEM_USE_PPP_MODE` | off | esp_modem PPP session | Follows PPP being off; no cellular modem. |
 | `CONFIG_ESP_GDBSTUB_ENABLED` | off | Serial GDB stub in the firmware | Debug-only. Not wanted in a production EMS-ESP image. |
+| `CONFIG_ESP_NETIF_REPORT_DATA_TRAFFIC` | off | netif TX/RX byte counters | Extra bookkeeping EMS-ESP does not use. |
 | `CONFIG_MDNS_ENABLE_CONSOLE_CLI` | off | mDNS commands on the IDF console | Extra console surface EMS-ESP does not expose. |
 | `CONFIG_MDNS_ENABLE_BROWSE` | off | mDNS service browsing (client) | EMS-ESP advertises itself; it does not browse for other services. |
 | `CONFIG_I2S_ISR_IRAM_SAFE` | off | I2S ISR placed in IRAM | Tasmota needs this for I2S + PSRAM. EMS-ESP does not use that path; turning it off saves IRAM. |
@@ -114,3 +115,21 @@ If EMS-ESP needs one of these libraries again, delete its `rm -rf` line in `tool
 | `CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL` | `1024` | Internal RAM (bytes) kept out of PSRAM-capable allocations | Keeps some internal heap free for allocations that must be internal. |
 | `CONFIG_LWIP_LOCAL_HOSTNAME` | `"ems-esp"` | Default DHCP / mDNS hostname | Identifies the device as EMS-ESP instead of the Tasmota default. |
 | `CONFIG_TINYUSB_DESC_CDC_STRING` | `"EMS-ESP CDC Device"` | USB-serial product string (S2/S3) | Same branding on the USB CDC port. |
+| `CONFIG_ESP_WIFI_ESPNOW_MAX_ENCRYPT_NUM` | `0` | Encrypted ESP-NOW peer slots | ESP-NOW is unused; no encrypt slots needed. |
+| `CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM` | `6` | Static Wi‑Fi RX buffers | Trimmed from the Tasmota default to free RAM. |
+| `CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM` | `16` | Dynamic Wi‑Fi RX buffers | Same moderate trim. |
+| `CONFIG_ESP_WIFI_DYNAMIC_TX_BUFFER_NUM` | `16` | Dynamic Wi‑Fi TX buffers | Same moderate trim. |
+| `CONFIG_ESP_WIFI_MGMT_SBUF_NUM` | `16` | Wi‑Fi management short buffers | Same moderate trim. |
+| `CONFIG_ESP_WIFI_RX_BA_WIN` | `4` | Wi‑Fi RX block-ack window | Smaller window; enough for EMS-ESP traffic. |
+| `CONFIG_ESP_WIFI_TX_BA_WIN` | `4` | Wi‑Fi TX block-ack window | Same as RX. |
+| `CONFIG_MDNS_MAX_SERVICES` | `4` | Max advertised mDNS services | EMS-ESP advertises few services. |
+| `CONFIG_MDNS_ACTION_QUEUE_LEN` | `8` | mDNS action queue depth | Smaller queue; cuts RAM. |
+| `CONFIG_ETH_DMA_RX_BUFFER_NUM` | `6` | Ethernet DMA RX descriptors | Trimmed for boards that use ETH. |
+| `CONFIG_ETH_DMA_TX_BUFFER_NUM` | `6` | Ethernet DMA TX descriptors | Same as RX. |
+| `CONFIG_LWIP_MAX_ACTIVE_TCP` | `10` | Max concurrent TCP connections | Enough for web UI / API / MQTT; frees PCB RAM. |
+| `CONFIG_LWIP_MAX_LISTENING_TCP` | `8` | Max listening TCP sockets | Same trim. |
+| `CONFIG_LWIP_MAX_UDP_PCBS` | `8` | Max UDP protocol control blocks | Same trim. |
+| `CONFIG_LWIP_MAX_RAW_PCBS` | `4` | Max raw IP PCBs | Same trim. |
+| `CONFIG_LWIP_IPV6_NUM_ADDRESSES` | `2` | IPv6 addresses per netif | Minimal IPv6; saves lwIP RAM. |
+
+Buffer trims are moderate only. Do **not** enable `SPIRAM_TRY_ALLOCATE_WIFI_LWIP`, `SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY`, or mDNS-from-SPIRAM on ESP32 — those caused boot loops on Ethernet boards.
