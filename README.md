@@ -70,7 +70,7 @@ SPI Ethernet is **not** in the overlay. Turning it off breaks Arduino `ETH.cpp` 
 
 Supporting fixes: `-s` now sources ESP-IDF `export.sh` and reads `IDF_VERSION` from `version.txt`; the config editor works on Python 3.14; README install/run commands were corrected.
 
-TinyUSB is pinned to a fixed commit in `tools/update-components.sh` (`TINYUSB_COMMIT`). Repeat runs fetch and check out that commit, then reapply the patches in `patches/tinyusb`. To move to a newer TinyUSB, change that commit.
+TinyUSB is pinned to a fixed commit in `tools/update-components.sh` (`TINYUSB_COMMIT`). Repeat runs fetch and check out that commit, then apply any `*.diff` files in `patches/tinyusb` (none currently — the low-speed hub workaround was dropped after TinyUSB #3864). To move to a newer TinyUSB, change that commit.
 
 #### Arduino libraries that are removed
 
