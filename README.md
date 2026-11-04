@@ -134,5 +134,6 @@ If EMS-ESP needs one of these libraries again, delete its `rm -rf` line in `tool
 | `CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH` | on | Write a core dump to the coredump flash partition on crash | EMS-ESP reads and reports it after restart. Boards without a coredump partition (e.g. 4MB) only log that none exists at boot. |
 | `CONFIG_ESP_COREDUMP_ENABLE_TO_NONE` | off | Disable core dumps | Forced off so dumps go to flash instead. |
 | `CONFIG_ESP_COREDUMP_DATA_FORMAT_ELF` | on | Core dump stored as ELF | Format EMS-ESP expects when parsing the dump. |
+| `CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE` | on | Bootloader keeps new firmware pending until verified | EMS-ESP confirms the image after ~2 minutes; a crash or restart before that rolls back to the previous firmware. Only boards flashed over serial get this bootloader. |
 
 Buffer trims are moderate only. Do **not** enable `SPIRAM_TRY_ALLOCATE_WIFI_LWIP`, `SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY`, or mDNS-from-SPIRAM on ESP32 — those caused boot loops on Ethernet boards.
