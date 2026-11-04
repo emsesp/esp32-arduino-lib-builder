@@ -50,3 +50,9 @@ CONFIG_LWIP_MAX_LISTENING_TCP=8
 CONFIG_LWIP_MAX_UDP_PCBS=8
 CONFIG_LWIP_MAX_RAW_PCBS=4
 CONFIG_LWIP_IPV6_NUM_ADDRESSES=2
+
+# Save a core dump to the coredump partition on a crash, EMS-ESP reads and reports it after the restart.
+# Boards without a coredump partition (4MB) only log that there's none at boot.
+CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH=y
+# CONFIG_ESP_COREDUMP_ENABLE_TO_NONE is not set
+CONFIG_ESP_COREDUMP_DATA_FORMAT_ELF=y
