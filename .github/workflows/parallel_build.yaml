@@ -1,4 +1,4 @@
-name: EMS-ESP IDF v5.5 gcc 15.2 picolib
+name: EMS-ESP IDF v5.5 gcc 15.3 picolib
 
 on:
   workflow_dispatch:
